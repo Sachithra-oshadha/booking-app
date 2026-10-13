@@ -20,17 +20,25 @@ A web app where an organisation manages shared resources (rooms, vehicles, equip
 
 ## Getting started
 
-Prerequisites: Node 20+, Docker.
+### Run everything with Docker (only needs Docker)
 
 ```bash
-docker compose up -d          # Postgres (host port 5433) + Mailpit
+docker compose up --build     # app + Postgres + Mailpit; migrates and seeds on first start
+```
+
+Open <http://localhost:3000> (Mailpit inbox: <http://localhost:8025>). Port 3000 must be free. `docker compose down -v` wipes the data for a fresh seed.
+
+### Local development (Node 20+, Docker for the DB)
+
+```bash
+docker compose up -d db mailpit
 npm install
 cp .env.example .env
 npm run db:reset              # drop -> migrate -> seed
 npm run dev                   # http://localhost:3000
 ```
 
-Postgres is mapped to host port **5433** so it doesn't collide with a locally installed Postgres on 5432. Mailpit UI: <http://localhost:8025>.
+In local dev Postgres is mapped to host port **5433** so it doesn't collide with a locally installed Postgres on 5432. Mailpit UI: <http://localhost:8025>.
 
 ### Seeded accounts (password `Password123!`)
 
