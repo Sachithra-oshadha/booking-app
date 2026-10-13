@@ -1,0 +1,13 @@
+.filters {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1.2fr 1fr 1fr auto;
+  gap: var(--space-3);
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+@media (max-width: 900px) {
+  .filters { grid-template-columns: 1fr 1fr; }
+}

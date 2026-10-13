@@ -1,0 +1,141 @@
+// Paste into https://dbdiagram.io/d to get a shareable ER diagram link.
+Enum location_kind { site building floor area }
+Enum resource_status { active maintenance retired }
+Enum booking_status { pending approved rejected cancelled }
+Enum series_pattern { daily weekly }
+
+Table user {
+  id text [pk]
+  name text [not null]
+  email text [unique, not null]
+  email_verified boolean
+  role text [not null, default: 'user']
+  created_at timestamptz
+  updated_at timestamptz
+}
+Table session {
+  id text [pk]
+  user_id text [ref: > user.id]
+  token text [unique]
+  expires_at timestamptz
+}
+Table account {
+  id text [pk]
+  user_id text [ref: > user.id]
+  provider_id text
+  account_id text
+  password text
+}
+Table verification {
+  id text [pk]
+  identifier text
+  value text
+  expires_at timestamptz
+}
+
+Table global_settings {
+  id int [pk, note: 'single row, CHECK id = 1']
+  working_days int[]
+  work_start time
+  work_end time
+  min_slot_minutes int
+  max_duration_minutes int
+  buffer_minutes int
+  cancel_cutoff_minutes int
+  requires_approval boolean
+  updated_at timestamptz
+}
+
+Table locations {
+  id uuid [pk]
+  name text [not null]
+  kind location_kind [not null]
+  parent_id uuid [ref: > locations.id, note: 'site -> building -> floor -> area']
+  created_at timestamptz
+}
+
+Table resource_types {
+  id uuid [pk]
+  name text [not null]
+  slug text [unique, not null]
+  working_days int[] [note: 'rule columns are nullable: null = inherit from global_settings']
+  work_start time
+  work_end time
+  min_slot_minutes int
+  max_duration_minutes int
+  buffer_minutes int
+  cancel_cutoff_minutes int
+  requires_approval boolean
+  created_at timestamptz
+}
+
+Table resources {
+  id uuid [pk]
+  asset_code text [unique, not null]
+  name text [not null]
+  type_id uuid [ref: > resource_types.id]
+  location_id uuid [ref: > locations.id]
+  description text
+  capacity int
+  make text
+  model text
+  serial_number text
+  status resource_status [not null]
+  working_days int[] [note: 'nullable overrides: null = inherit from type']
+  work_start time
+  work_end time
+  min_slot_minutes int
+  max_duration_minutes int
+  buffer_minutes int
+  cancel_cutoff_minutes int
+  requires_approval boolean
+  created_at timestamptz
+  updated_at timestamptz
+}
+
+Table booking_series {
+  id uuid [pk]
+  user_id text [ref: > user.id]
+  resource_id uuid [ref: > resources.id]
+  pattern series_pattern
+  start_date date
+  until_date date
+  occurrence_count int
+  start_time time
+  end_time time
+  purpose text
+  created_at timestamptz
+}
+
+Table bookings {
+  id uuid [pk]
+  resource_id uuid [ref: > resources.id]
+  user_id text [ref: > user.id]
+  series_id uuid [ref: > booking_series.id]
+  purpose text
+  starts_at timestamptz
+  ends_at timestamptz
+  blocked_until timestamptz [note: 'ends_at + buffer; the exclusion constraint uses [starts_at, blocked_until)']
+  status booking_status
+  buffer_minutes int [note: 'snapshot at creation']
+  cancel_cutoff_minutes int [note: 'snapshot at creation']
+  decided_by text [ref: > user.id]
+  decided_at timestamptz
+  decision_note text
+  cancelled_by text [ref: > user.id]
+  cancelled_at timestamptz
+  created_at timestamptz
+  Note: 'EXCLUDE USING gist (resource_id WITH =, tstzrange(starts_at, blocked_until) WITH &&) WHERE status IN (pending, approved)'
+}
+
+Table notifications {
+  id uuid [pk]
+  user_id text [ref: > user.id]
+  type text
+  title text
+  body text
+  booking_id uuid [ref: > bookings.id]
+  series_id uuid [ref: > booking_series.id]
+  read_at timestamptz
+  created_at timestamptz
+}

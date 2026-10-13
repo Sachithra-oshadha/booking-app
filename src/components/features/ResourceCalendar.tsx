@@ -1,0 +1,71 @@
+"use client";
+
+import dayGridPlugin from "@fullcalendar/daygrid";
+import FullCalendar from "@fullcalendar/react";
+import timeGridPlugin from "@fullcalendar/timegrid";
+import styles from "./ResourceCalendar.module.css";
+
+export type CalEvent = {
+  id: string;
+  title: string;
+  start: string; // Colombo wall-clock ISO, no offset
+  end: string;
+  kind: "own" | "other" | "pending" | "buffer";
+};
+
+const COLORS = {
+  own: { backgroundColor: "#1f4fd8", borderColor: "#1f4fd8", textColor: "#ffffff" },
+  other: { backgroundColor: "#5d6878", borderColor: "#5d6878", textColor: "#ffffff" },
+  pending: { backgroundColor: "#fdf1da", borderColor: "#9a5b00", textColor: "#9a5b00" },
+  buffer: { backgroundColor: "#e3e6ea", borderColor: "#e3e6ea", textColor: "#5d6878" },
+};
+
+/**
+ * Week view in Asia/Colombo. Events arrive as wall-clock strings and the calendar runs in "UTC" mode,
+ * so what you see is exactly Colombo time regardless of the browser's timezone.
+ */
+export function ResourceCalendar({
+  events,
+  workingDays,
+  workStart,
+  workEnd,
+  initialDate,
+}: {
+  events: CalEvent[];
+  workingDays: number[]; // 1 = Mon … 7 = Sun
+  workStart: string;
+  workEnd: string;
+  initialDate: string;
+}) {
+  const startHour = Math.max(0, Number(workStart.slice(0, 2)) - 1);
+  const endHour = Math.min(24, Number(workEnd.slice(0, 2)) + 2);
+  return (
+    <div className={styles.wrap}>
+      <FullCalendar
+        plugins={[dayGridPlugin, timeGridPlugin]}
+        initialView="timeGridWeek"
+        initialDate={initialDate}
+        timeZone="UTC"
+        firstDay={1}
+        allDaySlot={false}
+        height="auto"
+        nowIndicator={false}
+        slotMinTime={`${String(startHour).padStart(2, "0")}:00:00`}
+        slotMaxTime={`${String(endHour).padStart(2, "0")}:00:00`}
+        slotDuration="00:30:00"
+        headerToolbar={{ left: "prev,next today", center: "title", right: "timeGridWeek,timeGridDay" }}
+        businessHours={{ daysOfWeek: workingDays.map((d) => d % 7), startTime: workStart, endTime: workEnd }}
+        events={events.map((e) => ({ id: e.id, title: e.title, start: e.start, end: e.end, ...COLORS[e.kind] }))}
+        eventTimeFormat={{ hour: "2-digit", minute: "2-digit", hour12: false }}
+        slotLabelFormat={{ hour: "2-digit", minute: "2-digit", hour12: false }}
+      />
+      <ul className={styles.legend}>
+        <li><i style={{ background: COLORS.own.backgroundColor }} /> Your booking</li>
+        <li><i style={{ background: COLORS.other.backgroundColor }} /> Booked</li>
+        <li><i style={{ background: COLORS.pending.backgroundColor, border: "1px solid #9a5b00" }} /> Pending approval</li>
+        <li><i style={{ background: COLORS.buffer.backgroundColor }} /> Buffer (cleanup)</li>
+        <li><i style={{ background: "#f0f1f3" }} /> Outside working hours</li>
+      </ul>
+    </div>
+  );
+}

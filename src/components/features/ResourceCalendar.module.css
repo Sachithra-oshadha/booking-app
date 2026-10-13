@@ -1,0 +1,23 @@
+.wrap {
+  font-size: 13px;
+  --fc-button-bg-color: var(--primary);
+  --fc-button-border-color: var(--primary);
+  --fc-button-hover-bg-color: var(--primary-hover);
+  --fc-button-hover-border-color: var(--primary-hover);
+  --fc-button-active-bg-color: var(--primary-hover);
+  --fc-button-active-border-color: var(--primary-hover);
+  --fc-today-bg-color: var(--primary-soft);
+  --fc-non-business-color: #eceef2;
+  --fc-border-color: var(--border);
+}
+.legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  padding: 0;
+  margin: var(--space-3) 0 0;
+  color: var(--muted);
+}
+.legend li { display: flex; align-items: center; gap: var(--space-2); }
+.legend i { width: 14px; height: 14px; border-radius: 3px; display: inline-block; }

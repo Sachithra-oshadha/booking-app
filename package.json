@@ -6,20 +6,43 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:seed": "tsx --env-file=.env src/db/seed.ts",
+    "db:reset": "tsx --env-file=.env scripts/reset.ts && npm run db:migrate && npm run db:seed",
+    "test": "tsx --test src/**/*.test.ts",
+    "race": "tsx --env-file=.env scripts/race.ts",
+    "smoke": "tsx --env-file=.env scripts/smoke.ts"
   },
   "dependencies": {
+    "@date-fns/tz": "^1.5.0",
+    "@fullcalendar/core": "^6.1.21",
+    "@fullcalendar/daygrid": "^6.1.21",
+    "@fullcalendar/react": "^6.1.21",
+    "@fullcalendar/timegrid": "^6.1.21",
+    "better-auth": "^1.7.7",
+    "date-fns": "^4.4.0",
+    "drizzle-orm": "^0.45.4",
     "next": "16.4.0",
+    "nodemailer": "^10.1.0",
+    "pg": "^8.23.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
+    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^18.0.7",
+    "drizzle-kit": "^0.31.11",
     "eslint": "^9",
     "eslint-config-next": "16.4.0",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

@@ -1,0 +1,13 @@
+.form {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.4fr 1fr auto auto;
+  gap: var(--space-3);
+  align-items: center;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+@media (max-width: 900px) {
+  .form { grid-template-columns: 1fr 1fr; }
+}
