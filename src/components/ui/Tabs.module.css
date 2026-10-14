@@ -7,4 +7,4 @@
   margin-bottom: -1px;
 }
 .tab:hover { text-decoration: none; color: var(--text); }
-.active { color: var(--primary); border-bottom-color: var(--primary); }
+.active { color: var(--primary-text); border-bottom-color: var(--primary); }

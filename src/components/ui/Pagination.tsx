@@ -11,12 +11,12 @@ export function Pagination({ path, params, page, pages }: { path: string; params
     return `${path}?${q}`;
   };
   return (
-    <div className={styles.bar}>
-      {page > 1 ? <Link href={href(page - 1)}>← Previous</Link> : <span className="muted">← Previous</span>}
+    <nav className={styles.bar} aria-label="Pagination">
+      {page > 1 ? <Link href={href(page - 1)}>← Previous</Link> : <span className="muted" aria-disabled="true">← Previous</span>}
       <span className="muted">
         Page {page} of {pages}
       </span>
-      {page < pages ? <Link href={href(page + 1)}>Next →</Link> : <span className="muted">Next →</span>}
-    </div>
+      {page < pages ? <Link href={href(page + 1)}>Next →</Link> : <span className="muted" aria-disabled="true">Next →</span>}
+    </nav>
   );
 }

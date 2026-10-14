@@ -1,5 +1,6 @@
 "use client";
 
+import { cloneElement, isValidElement, useId } from "react";
 import { useFieldError } from "./ActionForm";
 import styles from "./FormField.module.css";
 
@@ -16,14 +17,18 @@ export function FormField({
   children: React.ReactNode;
 }) {
   const error = useFieldError(name);
+  const id = useId();
+  const control = isValidElement<Record<string, unknown>>(children)
+    ? cloneElement(children, error ? { "aria-invalid": true, "aria-describedby": id } : hint ? { "aria-describedby": id } : {})
+    : children;
   return (
     <div className={styles.field}>
       <label className={styles.label}>
         <span>{label}</span>
-        {children}
+        {control}
       </label>
-      {hint && !error && <span className={styles.hint}>{hint}</span>}
-      {error && <span className={styles.error}>{error}</span>}
+      {hint && !error && <span id={id} className={styles.hint}>{hint}</span>}
+      {error && <span id={id} className={styles.error} role="alert">⚠ {error}</span>}
     </div>
   );
 }
