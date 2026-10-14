@@ -8,10 +8,12 @@
   align-items: center;
   gap: var(--space-5);
 }
-.brand { font-weight: 800; color: var(--text); font-size: 17px; }
+.brand { font-weight: 700; color: var(--text); font-size: 17px; }
 .brand:hover { text-decoration: none; }
 .links { display: flex; gap: var(--space-4); flex: 1; }
-.links a { color: var(--text); font-weight: 600; }
+.links a { color: var(--muted); font-weight: 600; padding: 6px 12px; border-radius: var(--radius); }
+.links a:hover { background: var(--surface-muted); color: var(--text); text-decoration: none; }
+.links a.active { background: var(--primary-soft); color: var(--primary-text); }
 .right { display: flex; align-items: center; gap: var(--space-4); }
 .bell { color: var(--text); display: inline-flex; align-items: center; gap: var(--space-2); }
 .count {
@@ -28,4 +30,9 @@
   .inner { height: auto; flex-wrap: wrap; padding: var(--space-3) var(--space-4); gap: var(--space-3); }
   .links { order: 3; flex-basis: 100%; }
   .user { display: none; }
+}
+.bellIcon { display: none; }
+@media (max-width: 640px) {
+  .bellIcon { display: inline; }
+  .bellText { display: none; }
 }

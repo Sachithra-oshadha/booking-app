@@ -13,16 +13,19 @@ export type CalEvent = {
   kind: "own" | "other" | "pending" | "buffer";
 };
 
-const COLORS = {
-  own: { backgroundColor: "#1f4fd8", borderColor: "#1f4fd8", textColor: "#ffffff" },
-  other: { backgroundColor: "#5d6878", borderColor: "#5d6878", textColor: "#ffffff" },
-  pending: { backgroundColor: "#fdf1da", borderColor: "#9a5b00", textColor: "#9a5b00" },
-  buffer: { backgroundColor: "#e3e6ea", borderColor: "#e3e6ea", textColor: "#5d6878" },
+const KIND_LABEL: Record<CalEvent["kind"], string> = {
+  own: "Your booking",
+  other: "Booked",
+  pending: "Pending approval",
+  buffer: "Buffer",
 };
+
+const day = (iso: string) => new Date(`${iso.slice(0, 10)}T12:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
 
 /**
  * Week view in Asia/Colombo. Events arrive as wall-clock strings and the calendar runs in "UTC" mode,
  * so what you see is exactly Colombo time regardless of the browser's timezone.
+ * Each kind of event differs by colour AND outline/pattern, and a text list mirrors the grid.
  */
 export function ResourceCalendar({
   events,
@@ -39,6 +42,7 @@ export function ResourceCalendar({
 }) {
   const startHour = Math.max(0, Number(workStart.slice(0, 2)) - 1);
   const endHour = Math.min(24, Number(workEnd.slice(0, 2)) + 2);
+  const listed = events.filter((e) => e.kind !== "buffer").sort((a, b) => a.start.localeCompare(b.start));
   return (
     <div className={styles.wrap}>
       <FullCalendar
@@ -55,17 +59,31 @@ export function ResourceCalendar({
         slotDuration="00:30:00"
         headerToolbar={{ left: "prev,next today", center: "title", right: "timeGridWeek,timeGridDay" }}
         businessHours={{ daysOfWeek: workingDays.map((d) => d % 7), startTime: workStart, endTime: workEnd }}
-        events={events.map((e) => ({ id: e.id, title: e.title, start: e.start, end: e.end, ...COLORS[e.kind] }))}
+        events={events.map((e) => ({ id: e.id, title: e.title, start: e.start, end: e.end, classNames: [`ev-${e.kind}`] }))}
         eventTimeFormat={{ hour: "2-digit", minute: "2-digit", hour12: false }}
         slotLabelFormat={{ hour: "2-digit", minute: "2-digit", hour12: false }}
       />
       <ul className={styles.legend}>
-        <li><i style={{ background: COLORS.own.backgroundColor }} /> Your booking</li>
-        <li><i style={{ background: COLORS.other.backgroundColor }} /> Booked</li>
-        <li><i style={{ background: COLORS.pending.backgroundColor, border: "1px solid #9a5b00" }} /> Pending approval</li>
-        <li><i style={{ background: COLORS.buffer.backgroundColor }} /> Buffer (cleanup)</li>
-        <li><i style={{ background: "#f0f1f3" }} /> Outside working hours</li>
+        <li><i className={styles.swOwn} /> Your booking</li>
+        <li><i className={styles.swOther} /> Booked by others</li>
+        <li><i className={styles.swPending} /> Pending approval (dashed outline)</li>
+        <li><i className={styles.swBuffer} /> Buffer / cleanup (hatched)</li>
+        <li><i className={styles.swClosed} /> Outside working hours</li>
       </ul>
+      <details className={styles.list}>
+        <summary>View these bookings as a list (Colombo time)</summary>
+        {listed.length === 0 ? (
+          <p className="muted">No bookings to show.</p>
+        ) : (
+          <ul>
+            {listed.map((e) => (
+              <li key={e.id}>
+                <strong>{day(e.start)}, {e.start.slice(11, 16)}–{e.end.slice(11, 16)}</strong> · {KIND_LABEL[e.kind]} · {e.title}
+              </li>
+            ))}
+          </ul>
+        )}
+      </details>
     </div>
   );
 }

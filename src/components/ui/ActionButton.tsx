@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useTransition } from "react";
+import { useId, useRef, useTransition } from "react";
 import type { Result } from "@/lib/errors";
 import { Button } from "./Button";
 import styles from "./ActionButton.module.css";
@@ -11,6 +11,8 @@ export function ActionButton<T>({
   action,
   children,
   confirm,
+  confirmLabel = "Confirm",
+  keepLabel = "Keep",
   variant = "secondary",
   size = "sm",
   successMessage = "Done",
@@ -18,6 +20,8 @@ export function ActionButton<T>({
   action: () => Promise<Result<T>>;
   children: React.ReactNode;
   confirm?: string;
+  confirmLabel?: string;
+  keepLabel?: string;
   variant?: "primary" | "secondary" | "danger" | "ghost";
   size?: "sm" | "md";
   /** Fallback toast. An action can override it by returning { message } (functions can't cross the server/client boundary). */
@@ -26,6 +30,7 @@ export function ActionButton<T>({
   const [pending, start] = useTransition();
   const toast = useToast();
   const dialog = useRef<HTMLDialogElement>(null);
+  const titleId = useId();
 
   const run = () =>
     start(async () => {
@@ -36,15 +41,15 @@ export function ActionButton<T>({
 
   return (
     <>
-      <Button variant={variant} size={size} disabled={pending} onClick={() => (confirm ? dialog.current?.showModal() : run())}>
+      <Button variant={variant} size={size} disabled={pending} aria-busy={pending} onClick={() => (confirm ? dialog.current?.showModal() : run())}>
         {pending ? "Working…" : children}
       </Button>
       {confirm && (
-        <dialog ref={dialog} className={styles.dialog}>
-          <p>{confirm}</p>
+        <dialog ref={dialog} className={styles.dialog} aria-labelledby={titleId}>
+          <p id={titleId}>{confirm}</p>
           <div className={styles.actions}>
             <Button variant="secondary" onClick={() => dialog.current?.close()}>
-              Keep
+              {keepLabel}
             </Button>
             <Button
               variant="danger"
@@ -53,7 +58,7 @@ export function ActionButton<T>({
                 run();
               }}
             >
-              Confirm
+              {confirmLabel}
             </Button>
           </div>
         </dialog>

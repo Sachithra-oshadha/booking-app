@@ -3,6 +3,7 @@
 import { createContext, useContext, useRef, useState, useTransition } from "react";
 import type { Result } from "@/lib/errors";
 import { Button } from "./Button";
+import styles from "./ActionForm.module.css";
 import { useToast } from "./Toast";
 
 const ErrorsCtx = createContext<Record<string, string>>({});
@@ -30,6 +31,7 @@ export function ActionForm<T>({
   className?: string;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [formError, setFormError] = useState<string | null>(null);
   const [pending, start] = useTransition();
   const toast = useToast();
   const ref = useRef<HTMLFormElement>(null);
@@ -41,6 +43,7 @@ export function ActionForm<T>({
       onSubmit={(e) => {
         e.preventDefault();
         const fd = new FormData(e.currentTarget);
+        setFormError(null);
         start(async () => {
           const r = await action(fd);
           if (r.ok) {
@@ -50,6 +53,7 @@ export function ActionForm<T>({
             if (resetOnSuccess) ref.current?.reset();
           } else {
             setErrors(r.fieldErrors ?? {});
+            if (!(r.details as { clashes?: unknown } | undefined)?.clashes) setFormError(r.error);
             toast(r.error, "error");
           }
           onResult?.(r);
@@ -59,6 +63,7 @@ export function ActionForm<T>({
       <ErrorsCtx.Provider value={errors}>
         <PendingCtx.Provider value={pending}>{children}</PendingCtx.Provider>
       </ErrorsCtx.Provider>
+      {formError && <p className={styles.error} role="alert">⚠ {formError}</p>}
     </form>
   );
 }
@@ -66,7 +71,7 @@ export function ActionForm<T>({
 export function SubmitButton({ children, variant }: { children: React.ReactNode; variant?: "primary" | "secondary" | "danger" }) {
   const pending = useContext(PendingCtx);
   return (
-    <Button type="submit" variant={variant} disabled={pending}>
+    <Button type="submit" variant={variant} disabled={pending} aria-busy={pending}>
       {pending ? "Working…" : children}
     </Button>
   );

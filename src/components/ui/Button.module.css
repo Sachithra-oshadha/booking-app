@@ -4,6 +4,7 @@
   justify-content: center;
   gap: var(--space-2);
   padding: 8px 16px;
+  min-height: 40px;
   border: 1px solid transparent;
   border-radius: var(--radius);
   font: inherit;
@@ -12,11 +13,12 @@
   cursor: pointer;
   text-decoration: none;
   white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s;
 }
 .btn:hover { text-decoration: none; }
 .btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
-.sm { padding: 5px 10px; font-size: 13px; }
+.sm { padding: 4px 12px; min-height: 32px; font-size: 13px; }
 
 .primary { background: var(--primary); color: #fff; }
 .primary:hover:not(:disabled) { background: var(--primary-hover); }
@@ -27,5 +29,5 @@
 .danger { background: var(--danger); color: #fff; }
 .danger:hover:not(:disabled) { background: var(--danger-hover); }
 
-.ghost { background: transparent; color: var(--primary); }
+.ghost { background: transparent; color: var(--primary-text); }
 .ghost:hover:not(:disabled) { background: var(--primary-soft); }

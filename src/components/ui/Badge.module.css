@@ -1,7 +1,7 @@
 .badge {
   display: inline-block;
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px 10px;
+  border-radius: 999px;
   font-size: 12px;
   font-weight: 700;
   text-transform: capitalize;
@@ -11,4 +11,4 @@
 .warn { background: var(--warn-soft); color: var(--warn); }
 .danger { background: var(--danger-soft); color: var(--danger); }
 .grey { background: var(--grey-soft); color: var(--muted); }
-.primary { background: var(--primary-soft); color: var(--primary); }
+.primary { background: var(--primary-soft); color: var(--primary-text); }

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Checkbox, Input, Select } from "@/components/ui/Input";
 import type { LocationRow } from "@/server/locations";
@@ -32,6 +33,7 @@ export function ResourceFilters({
       </Select>
       <Checkbox name="now" value="1" label="Available now" defaultChecked={values.now === "1"} />
       <Button type="submit">Filter</Button>
+      {(values.q || values.type || values.location || values.status || values.now) && <Link href="/resources">Clear filters</Link>}
     </form>
   );
 }
