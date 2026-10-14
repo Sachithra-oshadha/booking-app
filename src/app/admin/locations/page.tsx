@@ -12,6 +12,8 @@ import { Table } from "@/components/ui/Table";
 import { KINDS, listLocations } from "@/server/locations";
 import { pageUser } from "@/server/session";
 
+export const metadata = { title: "Locations" };
+
 export default async function LocationsPage({ searchParams }: { searchParams: Promise<{ edit?: string }> }) {
   await pageUser("location:manage");
   const sp = await searchParams;
@@ -37,7 +39,7 @@ export default async function LocationsPage({ searchParams }: { searchParams: Pr
               </FormField>
             </>
           )}
-          <div style={{ alignSelf: "flex-end" }}><SubmitButton>{editing ? "Rename" : "Add"}</SubmitButton></div>
+          <div className="end"><SubmitButton>{editing ? "Rename" : "Add"}</SubmitButton></div>
         </ActionForm>
       </Card>
       <Table>

@@ -5,3 +5,6 @@
 @media (max-width: 700px) {
   .grid { grid-template-columns: 1fr; }
 }
+.toggle { border: 0; padding: 0; margin: 0; min-width: 0; }
+.review { padding: var(--space-2) var(--space-3); background: var(--surface-muted); border-radius: var(--radius); font-size: 14px; }
+.done { padding: var(--space-2) var(--space-3); background: var(--success-soft); color: var(--success); border-radius: var(--radius); font-weight: 600; }

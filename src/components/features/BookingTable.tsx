@@ -23,7 +23,7 @@ export function BookingTable({
   if (rows.length === 0) return <EmptyState title="No bookings here" />;
   const now = new Date();
   return (
-    <Table>
+    <Table cards>
       <thead>
         <tr>
           <th>Resource</th>
@@ -42,33 +42,33 @@ export function BookingTable({
           const s = b.seriesId ? series.get(b.seriesId) : undefined;
           return (
             <tr key={b.id}>
-              <td>
+              <td data-label="Resource">
                 <Link href={`/resources/${b.resourceId}`}>{b.resourceName}</Link>
                 <div className="muted small">{b.assetCode}</div>
               </td>
-              {showUser && <td>{b.userName}</td>}
-              <td>
+              {showUser && <td data-label="Booked by">{b.userName}</td>}
+              <td data-label="When (Colombo)">
                 {fmtRange(b.startsAt, b.endsAt)}
                 {s && <div className="muted small">Recurring {s.pattern} · {s.count} in series</div>}
               </td>
-              <td>
+              <td data-label="Status">
                 <Badge status={status} />
                 {b.decisionNote && <div className="muted small">“{b.decisionNote}”</div>}
               </td>
-              <td className="muted">{b.purpose ?? "–"}</td>
+              <td className="muted" data-label="Purpose">{b.purpose ?? "–"}</td>
               <td>
                 <div className="row">
                   {live && blocker === null && (
-                    <ActionButton action={cancelBooking.bind(null, b.id)} confirm="Cancel this booking?" successMessage="Booking cancelled">
+                    <ActionButton action={cancelBooking.bind(null, b.id)} confirm={`Cancel your booking of ${b.resourceName}? This frees the slot.`} confirmLabel="Cancel booking" keepLabel="Keep booking" successMessage="Booking cancelled">
                       Cancel
                     </ActionButton>
                   )}
                   {live && blocker === null && b.seriesId && (
-                    <ActionButton action={cancelSeries.bind(null, b.seriesId)} confirm="Cancel every upcoming booking in this series?">
+                    <ActionButton action={cancelSeries.bind(null, b.seriesId)} confirm="Cancel every upcoming booking in this series?" confirmLabel="Cancel series" keepLabel="Keep series">
                       Cancel series
                     </ActionButton>
                   )}
-                  {live && blocker && blocker !== "n/a" && <span className="muted small" title={blocker}>Cancel window passed</span>}
+                  {live && blocker && blocker !== "n/a" && <span className="muted small">Cancel window passed: {blocker}</span>}
                 </div>
               </td>
             </tr>

@@ -17,6 +17,8 @@ import { pageUser } from "@/server/session";
 
 const dash = (v: unknown) => (v === null || v === undefined ? <span className="muted">inherit</span> : String(v));
 
+export const metadata = { title: "Resource types" };
+
 export default async function ResourceTypesPage({ searchParams }: { searchParams: Promise<{ edit?: string; new?: string }> }) {
   await pageUser("resource-type:manage");
   const sp = await searchParams;

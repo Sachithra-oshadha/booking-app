@@ -3,7 +3,7 @@ import { ToastProvider } from "@/components/ui/Toast";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Resource Booking",
+  title: { default: "Resource Booking", template: "%s · Resource Booking" },
   description: "Book shared rooms, vehicles, equipment and tools without overlaps.",
 };
 

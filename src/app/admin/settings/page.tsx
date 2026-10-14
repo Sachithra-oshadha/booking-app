@@ -6,6 +6,8 @@ import { Card } from "@/components/ui/Card";
 import { getGlobalSettings } from "@/server/rules";
 import { pageUser } from "@/server/session";
 
+export const metadata = { title: "Global settings" };
+
 export default async function SettingsPage() {
   await pageUser("settings:manage");
   const g = await getGlobalSettings();

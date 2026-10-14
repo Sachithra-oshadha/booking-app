@@ -16,6 +16,8 @@ import { pageUser } from "@/server/session";
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
+export const metadata = { title: "Manage resources" };
+
 export default async function AdminResourcesPage({ searchParams }: { searchParams: Promise<{ edit?: string; new?: string }> }) {
   await pageUser("resource:manage");
   const sp = await searchParams;

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BookingTable } from "@/components/features/BookingTable";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { Button } from "@/components/ui/Button";
@@ -13,6 +14,8 @@ import styles from "./page.module.css";
 type Search = { status?: string; resource?: string; user?: string; from?: string; to?: string; page?: string };
 const DATE = /^\d{4}-\d{2}-\d{2}$/;
 const UUID = /^[0-9a-f-]{36}$/i;
+
+export const metadata = { title: "All bookings" };
 
 export default async function AdminBookingsPage({ searchParams }: { searchParams: Promise<Search> }) {
   const actor = await pageUser("booking:view:all");
@@ -51,6 +54,7 @@ export default async function AdminBookingsPage({ searchParams }: { searchParams
         <Input type="date" name="from" defaultValue={sp.from} aria-label="From date" />
         <Input type="date" name="to" defaultValue={sp.to} aria-label="To date" />
         <Button type="submit">Filter</Button>
+        {(sp.status || sp.resource || sp.user || sp.from || sp.to) && <Link href="/admin/bookings">Clear filters</Link>}
       </form>
       <BookingTable rows={rows} actor={actor} series={series} showUser />
       <Pagination path="/admin/bookings" params={{ status: sp.status, resource: sp.resource, user: sp.user, from: sp.from, to: sp.to }} page={page} pages={Math.ceil(total / ADMIN_PAGE_SIZE)} />

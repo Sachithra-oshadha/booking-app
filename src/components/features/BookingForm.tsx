@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { createBooking, createSeries } from "@/actions/bookings";
 import { ActionForm, SubmitButton } from "@/components/ui/ActionForm";
@@ -29,6 +30,18 @@ export function BookingForm({
 }) {
   const [recurring, setRecurring] = useState(false);
   const [clashes, setClashes] = useState<Clash[]>([]);
+  const [done, setDone] = useState(false);
+  const [vals, setVals] = useState({ date: defaults.date ?? "", start: defaults.start ?? "", end: defaults.end ?? "" });
+  const track = (e: React.ChangeEvent<HTMLElement>) => {
+    const t = e.target as HTMLInputElement;
+    const k = ({ date: "date", startDate: "date", startTime: "start", endTime: "end" } as Record<string, "date" | "start" | "end">)[t.name];
+    if (k) setVals((v) => ({ ...v, [k]: t.value }));
+    setDone(false);
+  };
+  const review =
+    vals.date && vals.start && vals.end
+      ? `${new Date(`${vals.date}T12:00:00`).toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" })}, ${vals.start}–${vals.end} (Asia/Colombo)${recurring ? ", then repeating" : ""}${requiresApproval ? " · needs admin approval" : " · confirmed instantly"}`
+      : null;
   const timeProps = { step: slotMinutes * 60, min: workStart, max: workEnd, required: true };
 
   return (
@@ -41,15 +54,19 @@ export function BookingForm({
         if (recurring) return requiresApproval ? `Request for ${x.count} bookings sent for approval` : `${x.count} bookings confirmed`;
         return x.status === "pending" ? "Request sent for approval" : "Booking confirmed";
       }}
-      onResult={(r: Result<unknown>) => setClashes(!r.ok ? ((r.details as { clashes?: Clash[] } | undefined)?.clashes ?? []) : [])}
+      onResult={(r: Result<unknown>) => {
+        setClashes(!r.ok ? ((r.details as { clashes?: Clash[] } | undefined)?.clashes ?? []) : []);
+        setDone(r.ok);
+      }}
     >
       <input type="hidden" name="resourceId" value={resourceId} />
-      <div className={styles.toggle} role="radiogroup" aria-label="Booking type">
-        <label><input type="radio" checked={!recurring} onChange={() => setRecurring(false)} /> Single booking</label>
-        <label><input type="radio" checked={recurring} onChange={() => setRecurring(true)} /> Recurring</label>
-      </div>
+      <fieldset className={styles.toggle}>
+        <legend className="sr-only">Booking type</legend>
+        <label><input type="radio" checked={!recurring} onChange={() => { setRecurring(false); setVals({ date: defaults.date ?? "", start: defaults.start ?? "", end: defaults.end ?? "" }); }} /> Single booking</label>
+        <label><input type="radio" checked={recurring} onChange={() => { setRecurring(true); setVals({ date: defaults.date ?? "", start: defaults.start ?? "", end: defaults.end ?? "" }); }} /> Recurring</label>
+      </fieldset>
 
-      <div className={styles.grid}>
+      <div className={styles.grid} onChange={track}>
         <FormField label={recurring ? "First date" : "Date"} name={recurring ? "startDate" : "date"}>
           <Input type="date" name={recurring ? "startDate" : "date"} min={today} defaultValue={defaults.date} required />
         </FormField>
@@ -82,6 +99,12 @@ export function BookingForm({
         <Textarea name="purpose" maxLength={500} />
       </FormField>
 
+      {review && <p className={styles.review} aria-live="polite"><strong>Review:</strong> {review}</p>}
+      {done && (
+        <p className={styles.done} role="status">
+          ✓ Done. <Link href="/bookings">View in My bookings</Link>
+        </p>
+      )}
       {clashes.length > 0 && <ClashList clashes={clashes} />}
       <div>
         <SubmitButton>{requiresApproval ? "Request booking" : "Book now"}</SubmitButton>

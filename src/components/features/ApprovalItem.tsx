@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { useToast } from "@/components/ui/Toast";
 import { fmt, fmtRange } from "@/lib/time";
+import styles from "./ApprovalItem.module.css";
 import type { PendingItem } from "@/server/approvals";
 
 export function ApprovalItem({ item, ownBlocked }: { item: PendingItem; ownBlocked: boolean }) {
@@ -44,10 +45,10 @@ export function ApprovalItem({ item, ownBlocked }: { item: PendingItem; ownBlock
               ? `${item.pattern}, ${item.startTime}–${item.endTime}, ${fmt(item.first, "EEE d MMM")} → ${fmt(item.last, "EEE d MMM yyyy")}`
               : fmtRange(item.startsAt, item.endsAt)}
           </p>
-          {ownBlocked && <p className="small" style={{ color: "var(--warn)" }}>This is your own request. Another admin has to decide it.</p>}
+          {ownBlocked && <p className={`small ${styles.own}`}>This is your own request. Another admin has to decide it.</p>}
         </div>
         <div className="row">
-          <Input placeholder="Note (required to reject)" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} aria-label="Decision note" style={{ width: 240 }} />
+          <Input placeholder="Note (required to reject)" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} aria-label="Decision note" className={styles.note} />
           <Button disabled={pending || ownBlocked} onClick={() => decide("approve")}>
             {series ? "Approve all" : "Approve"}
           </Button>

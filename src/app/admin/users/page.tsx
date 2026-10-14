@@ -7,6 +7,8 @@ import { fmt } from "@/lib/time";
 import { listUsers } from "@/server/catalogue";
 import { pageUser } from "@/server/session";
 
+export const metadata = { title: "Users" };
+
 export default async function UsersPage() {
   const me = await pageUser("user:manage-roles");
   const users = await listUsers();
