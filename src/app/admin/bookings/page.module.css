@@ -9,5 +9,6 @@
   padding: var(--space-3);
 }
 @media (max-width: 900px) {
-  .filters { grid-template-columns: 1fr 1fr; }
+  .filters { grid-template-columns: 1fr 1fr;
+     }
 }

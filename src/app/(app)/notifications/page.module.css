@@ -7,5 +7,5 @@
   border: 1px solid var(--border);
   border-radius: var(--radius);
 }
-.unread { background: var(--primary-soft); border-color: #bccdf6; }
+.unread { background: var(--primary-soft); border-color: var(--primary-border); }
 .read { background: var(--surface); }

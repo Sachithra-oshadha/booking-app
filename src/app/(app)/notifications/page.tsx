@@ -8,6 +8,8 @@ import { listNotifications } from "@/server/notifications";
 import { pageUser } from "@/server/session";
 import styles from "./page.module.css";
 
+export const metadata = { title: "Notifications" };
+
 export default async function NotificationsPage() {
   const user = await pageUser();
   const items = await listNotifications(user.id);

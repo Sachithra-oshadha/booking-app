@@ -11,6 +11,8 @@ const TABS = [
   { key: "cancelled", label: "Cancelled & rejected", href: "/bookings?tab=cancelled" },
 ];
 
+export const metadata = { title: "My bookings" };
+
 export default async function BookingsPage({ searchParams }: { searchParams: Promise<{ tab?: string }> }) {
   const user = await pageUser("booking:view:own");
   const { tab: t } = await searchParams;

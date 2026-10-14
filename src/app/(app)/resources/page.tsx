@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { FindFreeForm } from "@/components/features/FindFreeForm";
 import { ResourceCard } from "@/components/features/ResourceCard";
 import { ResourceFilters } from "@/components/features/ResourceFilters";
@@ -15,6 +16,8 @@ const PAGE_SIZE = 24;
 
 type Search = { q?: string; type?: string; location?: string; status?: string; now?: string; page?: string };
 
+export const metadata = { title: "Resources" };
+
 export default async function ResourcesPage({ searchParams }: { searchParams: Promise<Search> }) {
   await pageUser("resource:view");
   const sp = await searchParams;
@@ -30,16 +33,22 @@ export default async function ResourcesPage({ searchParams }: { searchParams: Pr
   return (
     <>
       <PageHeader title="Resources" subtitle={`${items.length} found`} />
-      <FindFreeForm types={types} locations={locations.map((l) => ({ id: l.id, label: `${"  ".repeat(l.depth)}${l.name} (${l.kind})` }))} />
+      <details className={styles.find}>
+        <summary>Find a free resource for a time range</summary>
+        <FindFreeForm types={types} locations={locations.map((l) => ({ id: l.id, label: `${"  ".repeat(l.depth)}${l.name} (${l.kind})` }))} />
+      </details>
       <ResourceFilters types={types} locations={locations} values={sp} />
       {shown.length === 0 ? (
-        <EmptyState title="No resources match">Try clearing a filter.</EmptyState>
+        <EmptyState title="No resources match" action={<Link href="/resources">Clear filters</Link>}>Try clearing a filter.</EmptyState>
       ) : (
+        <>
+        <h2 className="sr-only">Results</h2>
         <div className={styles.grid}>
           {shown.map((r) => (
             <ResourceCard key={r.id} r={r} freeNow={r.freeNow} />
           ))}
         </div>
+        </>
       )}
       <Pagination path="/resources" params={{ q: sp.q, type: sp.type, location: sp.location, status: sp.status, now: sp.now }} page={page} pages={pages} />
     </>

@@ -3,3 +3,5 @@
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--space-4);
 }
+.find summary { cursor: pointer; font-weight: 600; padding: var(--space-2) 0; }
+.find[open] summary { margin-bottom: var(--space-2); }

@@ -4,6 +4,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { adminCount, listPending } from "@/server/approvals";
 import { pageUser } from "@/server/session";
 
+export const metadata = { title: "Approvals" };
+
 export default async function ApprovalsPage() {
   const user = await pageUser("booking:approve");
   const [items, admins] = await Promise.all([listPending(), adminCount()]);

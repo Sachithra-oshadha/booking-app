@@ -14,6 +14,8 @@ import styles from "./page.module.css";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+export const metadata = { title: "Resource" };
+
 export default async function ResourcePage({
   params,
   searchParams,
@@ -73,7 +75,7 @@ export default async function ResourcePage({
           </Card>
         </div>
 
-        <div className="stack">
+        <div className={`stack ${styles.side}`}>
           <Card title="Book this resource">
             {bookable ? (
               <BookingForm
