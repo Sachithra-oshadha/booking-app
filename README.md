@@ -2,7 +2,12 @@
 
 A web app where an organisation manages shared resources (rooms, vehicles, equipment, tools) across a location hierarchy, and people reserve them **without overlaps**, with approvals, recurring bookings, notifications and clear availability.
 
-**Links (fill in before submitting):** ER diagram: https://dbdiagram.io/d/primewavelab-tech-assign-6ad09462064322c8695a5376 · Demo video: _<link>_ · The diagram source is in [`docs/schema.dbml`](docs/schema.dbml).
+**Links (fill in before submitting):** 
+
+* ER diagram: [_ERD Link_](https://dbdiagram.io/d/primewavelab-tech-assign-6ad09462064322c8695a5376)
+* Demo video: [_Video Link_](https://drive.google.com/file/d/13A3U3KfxlCXcUzJdJOHndWnARBXM4CJm/view?usp=sharing)
+
+The diagram source is in [`docs/schema.dbml`](docs/schema.dbml).
 
 ## Tech stack
 
