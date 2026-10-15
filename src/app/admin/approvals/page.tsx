@@ -1,14 +1,14 @@
 import { ApprovalItem } from "@/components/features/ApprovalItem";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { EmptyState } from "@/components/ui/EmptyState";
-import { adminCount, listPending } from "@/server/approvals";
+import { listPending } from "@/server/approvals";
 import { pageUser } from "@/server/session";
 
 export const metadata = { title: "Approvals" };
 
 export default async function ApprovalsPage() {
-  const user = await pageUser("booking:approve");
-  const [items, admins] = await Promise.all([listPending(), adminCount()]);
+  await pageUser("booking:approve");
+  const items = await listPending();
   return (
     <>
       <PageHeader title="Approvals" subtitle={`${items.length} waiting. Recurring requests are decided as one unit.`} />
@@ -17,7 +17,7 @@ export default async function ApprovalsPage() {
       ) : (
         <div className="stack">
           {items.map((it) => (
-            <ApprovalItem key={`${it.kind}-${it.id}`} item={it} ownBlocked={it.userId === user.id && admins > 1} />
+            <ApprovalItem key={`${it.kind}-${it.id}`} item={it} />
           ))}
         </div>
       )}

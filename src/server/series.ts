@@ -7,7 +7,7 @@ import { expandOccurrences, MAX_OCCURRENCES, validateSlot } from "@/lib/slot";
 import { fmt, fromLocal } from "@/lib/time";
 import { cancelBlocker, minutes } from "./bookings";
 import { adminIds, notify } from "./notifications";
-import type { Actor } from "./permissions";
+import { can, type Actor } from "./permissions";
 import { getEffectiveRules } from "./rules";
 
 export type SeriesInput = {
@@ -77,7 +77,7 @@ export async function createSeries(actor: Actor, input: SeriesInput) {
       });
     }
 
-    const status = rules.requiresApproval ? ("pending" as const) : ("approved" as const);
+    const status = rules.requiresApproval && !can(actor, "booking:approve") ? ("pending" as const) : ("approved" as const);
     const [s] = await tx
       .insert(bookingSeries)
       .values({

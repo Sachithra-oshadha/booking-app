@@ -52,17 +52,27 @@ async function main() {
     if (after.ok) created.push(after.data.id);
     ok("booking inside a buffer is refused; right after the buffer is fine");
 
-    // 3. requires-approval resource -> pending; pending blocks the slot; admin can't approve own booking
-    const mine = await createBooking(admin1, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 15), "09:00"), endsAt: fromLocal(addDays(week, 15), "10:00") });
-    created.push(mine.id);
-    assert.equal(mine.status, "pending");
-    const clash = await toResult(() => createBooking(u1, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 15), "09:30"), endsAt: fromLocal(addDays(week, 15), "10:30") }));
+    // 3. requires-approval resource: a user's booking is pending and blocks the slot; admins are auto-approved
+    const pend = await createBooking(u1, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 15), "09:00"), endsAt: fromLocal(addDays(week, 15), "10:00") });
+    created.push(pend.id);
+    assert.equal(pend.status, "pending");
+    const clash = await toResult(() => createBooking(u2, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 15), "09:30"), endsAt: fromLocal(addDays(week, 15), "10:30") }));
     assert.equal(clash.ok, false);
-    ok("approval resource starts pending and a pending booking blocks the slot");
-    const self = await toResult(() => decideBooking(admin1, mine.id, "approved"));
-    assert.equal(self.ok, false);
-    await decideBooking(admin2, mine.id, "approved");
-    ok("admin cannot approve own booking while another admin exists; the other admin can");
+    ok("approval resource: user booking starts pending and blocks the slot");
+    await decideBooking(admin1, pend.id, "approved");
+    assert.equal((await db.select().from(bookings).where(eq(bookings.id, pend.id)))[0].status, "approved");
+    ok("an admin approves the user's pending booking");
+    for (const [i, a] of [admin1, admin2].entries()) {
+      const mine = await createBooking(a, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 17 + i), "09:00"), endsAt: fromLocal(addDays(week, 17 + i), "10:00") });
+      created.push(mine.id);
+      assert.equal(mine.status, "approved", `admin ${i + 1} single booking auto-approved`);
+    }
+    const ser = await createSeries(admin2, { resourceId: vehicle.id, pattern: "weekly", startDate: addDays(week, 21), occurrenceCount: 3, startTime: "09:00", endTime: "10:00" });
+    const rows = await db.select().from(bookings).where(eq(bookings.seriesId, ser.id));
+    created.push(...rows.map((r) => r.id));
+    assert.equal(rows.length, 3);
+    assert.ok(rows.every((r) => r.status === "approved"), "admin series auto-approved");
+    ok("admin bookings (both admins, single and recurring) are auto-approved");
 
     // 4. rejecting needs a note; rejected frees the slot
     const second = await createBooking(u1, { resourceId: vehicle.id, startsAt: fromLocal(addDays(week, 16), "09:00"), endsAt: fromLocal(addDays(week, 16), "10:00") });

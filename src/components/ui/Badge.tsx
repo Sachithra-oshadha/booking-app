@@ -1,15 +1,17 @@
 import styles from "./Badge.module.css";
 
-const ICON: Record<string, string> = { success: "✓", warn: "!", danger: "✕", grey: "–", primary: "●" };
-
 const TONE: Record<string, string> = {
   approved: "success",
   active: "success",
+  available: "success",
   pending: "warn",
-  maintenance: "warn",
+  maintenance: "outline",
+  out: "outline",
   expired: "grey",
   retired: "grey",
   cancelled: "grey",
+  booked: "grey",
+  closed: "grey",
   rejected: "danger",
   admin: "primary",
   user: "grey",
@@ -20,7 +22,8 @@ export function Badge({ status, children }: { status: string; children?: React.R
   const tone = TONE[status] ?? "grey";
   return (
     <span className={`${styles.badge} ${styles[tone]}`}>
-      <span aria-hidden="true">{ICON[tone]}</span> {children ?? status}
+      <span aria-hidden="true" className={styles.dot} />
+      {children ?? status}
     </span>
   );
 }

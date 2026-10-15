@@ -1,27 +1,18 @@
-import { and, asc, eq, gt, sql } from "drizzle-orm";
-import { db, type Tx } from "@/db";
+import { and, asc, eq, gt } from "drizzle-orm";
+import { db } from "@/db";
 import { bookings, bookingSeries, resources, user } from "@/db/schema";
 import { sendMails, type Mail } from "@/lib/email";
 import { AppError } from "@/lib/errors";
 import { fmtRange } from "@/lib/time";
 import { notify } from "./notifications";
-import { ADMIN_ROLE, type Actor } from "./permissions";
+import type { Actor } from "./permissions";
 
 export type Decision = "approved" | "rejected";
-
-/** Admins can't decide their own bookings unless they are the only admin. */
-async function assertCanDecide(tx: Tx, actor: Actor, bookingUserId: string) {
-  if (actor.id !== bookingUserId) return;
-  const [{ n }] = await tx.select({ n: sql<number>`count(*)::int` }).from(user).where(eq(user.role, ADMIN_ROLE));
-  if (n > 1) throw new AppError("FORBIDDEN", "You can't decide your own booking while another admin exists.");
-}
 
 function checkNote(decision: Decision, note?: string) {
   if (decision === "rejected" && !note?.trim())
     throw new AppError("VALIDATION", "Add a short reason for the rejection.", { fieldErrors: { note: "Required when rejecting" } });
 }
-
-const verb = (d: Decision) => (d === "approved" ? "approved" : "rejected");
 
 export async function decideBooking(actor: Actor, id: string, decision: Decision, note?: string) {
   checkNote(decision, note);
@@ -31,7 +22,6 @@ export async function decideBooking(actor: Actor, id: string, decision: Decision
     if (!b) throw new AppError("NOT_FOUND", "Booking not found.");
     if (b.status !== "pending") throw new AppError("CONFLICT", `This booking is already ${b.status}.`);
     if (b.startsAt <= new Date()) throw new AppError("RULE_VIOLATION", "This request has expired because its start time has passed.");
-    await assertCanDecide(tx, actor, b.userId);
     await tx
       .update(bookings)
       .set({ status: decision, decidedBy: actor.id, decidedAt: new Date(), decisionNote: note?.trim() || null })
@@ -39,8 +29,8 @@ export async function decideBooking(actor: Actor, id: string, decision: Decision
     const [r] = await tx.select({ name: resources.name }).from(resources).where(eq(resources.id, b.resourceId));
     await notify(tx, outbox, [b.userId], {
       type: `booking_${decision}`,
-      title: `Booking ${verb(decision)}`,
-      body: `Your request for ${r.name}, ${fmtRange(b.startsAt, b.endsAt)} was ${verb(decision)}.${note?.trim() ? ` Note: ${note.trim()}` : ""}`,
+      title: `Booking ${decision}`,
+      body: `Your request for ${r.name}, ${fmtRange(b.startsAt, b.endsAt)} was ${decision}.${note?.trim() ? ` Note: ${note.trim()}` : ""}`,
       bookingId: id,
     });
   });
@@ -60,7 +50,6 @@ export async function decideSeries(actor: Actor, seriesId: string, decision: Dec
       .where(and(eq(bookings.seriesId, seriesId), eq(bookings.status, "pending"), gt(bookings.startsAt, new Date())))
       .for("update");
     if (!pending.length) throw new AppError("CONFLICT", "Nothing in this series is waiting for a decision.");
-    await assertCanDecide(tx, actor, s.userId);
     await tx
       .update(bookings)
       .set({ status: decision, decidedBy: actor.id, decidedAt: new Date(), decisionNote: note?.trim() || null })
@@ -68,8 +57,8 @@ export async function decideSeries(actor: Actor, seriesId: string, decision: Dec
     const [r] = await tx.select({ name: resources.name }).from(resources).where(eq(resources.id, s.resourceId));
     await notify(tx, outbox, [s.userId], {
       type: `booking_${decision}`,
-      title: `Recurring booking ${verb(decision)}`,
-      body: `Your recurring request for ${r.name} (${pending.length} bookings) was ${verb(decision)}.${note?.trim() ? ` Note: ${note.trim()}` : ""}`,
+      title: `Recurring booking ${decision}`,
+      body: `Your recurring request for ${r.name} (${pending.length} bookings) was ${decision}.${note?.trim() ? ` Note: ${note.trim()}` : ""}`,
       seriesId,
     });
     return pending.length;
@@ -124,9 +113,4 @@ export async function listPending(): Promise<PendingItem[]> {
     }
   }
   return out;
-}
-
-export async function adminCount() {
-  const [{ n }] = await db.select({ n: sql<number>`count(*)::int` }).from(user).where(eq(user.role, ADMIN_ROLE));
-  return n;
 }

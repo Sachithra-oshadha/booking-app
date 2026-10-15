@@ -28,7 +28,8 @@ export async function createBooking(actor: Actor, input: BookingInput) {
     const [problem] = validateSlot(ctx.rules, input.startsAt, input.endsAt);
     if (problem) throw new AppError("RULE_VIOLATION", problem);
 
-    const status = ctx.rules.requiresApproval ? "pending" : "approved";
+    // admins approve their own bookings implicitly
+    const status = ctx.rules.requiresApproval && !can(actor, "booking:approve") ? "pending" : "approved";
     // The exclusion constraint is the final word on overlaps: a clash raises 23P01 (mapped in toResult).
     const [row] = await tx
       .insert(bookings)

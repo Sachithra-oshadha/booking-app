@@ -11,7 +11,7 @@ import { fmt, fmtRange } from "@/lib/time";
 import styles from "./ApprovalItem.module.css";
 import type { PendingItem } from "@/server/approvals";
 
-export function ApprovalItem({ item, ownBlocked }: { item: PendingItem; ownBlocked: boolean }) {
+export function ApprovalItem({ item }: { item: PendingItem }) {
   const [note, setNote] = useState("");
   const [pending, start] = useTransition();
   const toast = useToast();
@@ -42,17 +42,16 @@ export function ApprovalItem({ item, ownBlocked }: { item: PendingItem; ownBlock
           </p>
           <p className="muted">
             {series
-              ? `${item.pattern}, ${item.startTime}–${item.endTime}, ${fmt(item.first, "EEE d MMM")} → ${fmt(item.last, "EEE d MMM yyyy")}`
+              ? `${item.pattern}, ${item.startTime}–${item.endTime}, ${fmt(item.first, "EEE d MMM")} to ${fmt(item.last, "EEE d MMM yyyy")}`
               : fmtRange(item.startsAt, item.endsAt)}
           </p>
-          {ownBlocked && <p className={`small ${styles.own}`}>This is your own request. Another admin has to decide it.</p>}
         </div>
         <div className="row">
           <Input placeholder="Note (required to reject)" value={note} onChange={(e) => setNote(e.target.value)} maxLength={500} aria-label="Decision note" className={styles.note} />
-          <Button disabled={pending || ownBlocked} onClick={() => decide("approve")}>
+          <Button disabled={pending} onClick={() => decide("approve")}>
             {series ? "Approve all" : "Approve"}
           </Button>
-          <Button variant="danger" disabled={pending || ownBlocked || !note.trim()} onClick={() => decide("reject")}>
+          <Button variant="danger" disabled={pending || !note.trim()} onClick={() => decide("reject")}>
             {series ? "Reject all" : "Reject"}
           </Button>
         </div>

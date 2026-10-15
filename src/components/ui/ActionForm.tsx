@@ -5,6 +5,7 @@ import type { Result } from "@/lib/errors";
 import { Button } from "./Button";
 import styles from "./ActionForm.module.css";
 import { useToast } from "./Toast";
+import { TriangleAlert } from "lucide-react";
 
 const ErrorsCtx = createContext<Record<string, string>>({});
 const PendingCtx = createContext(false);
@@ -63,7 +64,7 @@ export function ActionForm<T>({
       <ErrorsCtx.Provider value={errors}>
         <PendingCtx.Provider value={pending}>{children}</PendingCtx.Provider>
       </ErrorsCtx.Provider>
-      {formError && <p className={styles.error} role="alert">⚠ {formError}</p>}
+      {formError && <p className={styles.error} role="alert"><TriangleAlert aria-hidden="true" size={14} style={{ verticalAlign: "text-bottom" }} /> {formError}</p>}
     </form>
   );
 }

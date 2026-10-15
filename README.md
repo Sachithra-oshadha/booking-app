@@ -2,7 +2,7 @@
 
 A web app where an organisation manages shared resources (rooms, vehicles, equipment, tools) across a location hierarchy, and people reserve them **without overlaps**, with approvals, recurring bookings, notifications and clear availability.
 
-**Links (fill in before submitting):** ER diagram: _<dbdiagram.io link>_ · Demo video: _<link>_ · The diagram source is in [`docs/er-diagram.md`](docs/er-diagram.md) and [`docs/schema.dbml`](docs/schema.dbml).
+**Links (fill in before submitting):** ER diagram: https://dbdiagram.io/d/primewavelab-tech-assign-6ad09462064322c8695a5376 · Demo video: _<link>_ · The diagram source is in [`docs/schema.dbml`](docs/schema.dbml).
 
 ## Tech stack
 

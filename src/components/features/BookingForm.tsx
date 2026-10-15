@@ -10,6 +10,7 @@ import type { Result } from "@/lib/errors";
 import type { Clash } from "@/server/series";
 import { ClashList } from "./ClashList";
 import styles from "./BookingForm.module.css";
+import { Check } from "lucide-react";
 
 export function BookingForm({
   resourceId,
@@ -102,7 +103,7 @@ export function BookingForm({
       {review && <p className={styles.review} aria-live="polite"><strong>Review:</strong> {review}</p>}
       {done && (
         <p className={styles.done} role="status">
-          ✓ Done. <Link href="/bookings">View in My bookings</Link>
+          <Check aria-hidden="true" size={16} style={{ verticalAlign: "text-bottom" }} /> Done. <Link href="/bookings">View in My bookings</Link>
         </p>
       )}
       {clashes.length > 0 && <ClashList clashes={clashes} />}

@@ -85,7 +85,7 @@ export default async function ResourcePage({
                 workEnd={minutesToTime(rules.workEndMin)}
                 today={todayLocal()}
                 defaults={sp}
-                requiresApproval={rules.requiresApproval}
+                requiresApproval={rules.requiresApproval && !can(user, "booking:approve")}
               />
             ) : (
               <p className="muted">This resource is {r.status} and can&apos;t be booked right now.</p>

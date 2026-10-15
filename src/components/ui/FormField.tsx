@@ -3,6 +3,7 @@
 import { cloneElement, isValidElement, useId } from "react";
 import { useFieldError } from "./ActionForm";
 import styles from "./FormField.module.css";
+import { TriangleAlert } from "lucide-react";
 
 /** Label + control + error. `name` links the field to the server's field errors. */
 export function FormField({
@@ -28,7 +29,7 @@ export function FormField({
         {control}
       </label>
       {hint && !error && <span id={id} className={styles.hint}>{hint}</span>}
-      {error && <span id={id} className={styles.error} role="alert">⚠ {error}</span>}
+      {error && <span id={id} className={styles.error} role="alert"><TriangleAlert aria-hidden="true" size={12} style={{ verticalAlign: "text-bottom" }} /> {error}</span>}
     </div>
   );
 }

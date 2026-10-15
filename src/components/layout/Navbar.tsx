@@ -4,6 +4,15 @@ import { unreadCount } from "@/server/notifications";
 import { NavLinks } from "./NavLinks";
 import { SignOutButton } from "./SignOutButton";
 import styles from "./Navbar.module.css";
+import { Bell } from "lucide-react";
+
+const initials = (name: string) =>
+  name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]!.toUpperCase())
+    .join("");
 
 export async function Navbar({ user }: { user: Actor }) {
   const unread = await unreadCount(user.id);
@@ -11,6 +20,7 @@ export async function Navbar({ user }: { user: Actor }) {
     <header className={styles.bar}>
       <div className={styles.inner}>
         <Link href="/resources" className={styles.brand}>
+          <span aria-hidden="true" className={styles.mark} />
           Resource Booking
         </Link>
         <NavLinks
@@ -22,11 +32,16 @@ export async function Navbar({ user }: { user: Actor }) {
         />
         <div className={styles.right}>
           <Link href="/notifications" className={styles.bell} aria-label={`Notifications, ${unread} unread`}>
-            <span aria-hidden="true" className={styles.bellIcon}>🔔</span>
-            <span className={styles.bellText}>Notifications</span>
+            <Bell aria-hidden="true" size={20} strokeWidth={1.5} />
             {unread > 0 && <span className={styles.count}>{unread}</span>}
           </Link>
-          <span className={styles.user}>{user.name}</span>
+          <div className={styles.user}>
+            <span aria-hidden="true" className={styles.avatar}>{initials(user.name)}</span>
+            <span className={styles.userText}>
+              <span className={styles.userName}>{user.name}</span>
+              <span className={styles.userRole}>{user.role === "admin" ? "Administrator" : "Member"}</span>
+            </span>
+          </div>
           <SignOutButton />
         </div>
       </div>

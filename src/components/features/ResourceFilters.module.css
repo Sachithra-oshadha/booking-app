@@ -1,13 +1,14 @@
 .form {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.4fr 1fr auto auto;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1.4fr) auto auto;
   gap: var(--space-3);
   align-items: center;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: var(--space-3);
 }
+.search { position: relative; }
+.search svg { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; }
+.search input { padding-left: 40px; }
+.clear { white-space: nowrap; font-weight: 500; }
 @media (max-width: 900px) {
   .form { grid-template-columns: 1fr 1fr; }
+  .search { grid-column: 1 / -1; }
 }

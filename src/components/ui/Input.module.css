@@ -1,17 +1,19 @@
 .control {
   width: 100%;
   padding: 8px 12px;
-  min-height: 40px;
-  border: 1px solid var(--border-strong);
-  border-radius: var(--radius);
-  background: var(--surface);
+  min-height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--surface-muted);
   color: var(--text);
+  caret-color: var(--primary);
   font: inherit;
 }
-.control:hover:not(:disabled) { border-color: var(--muted); }
+.control::placeholder { color: var(--muted); }
+.control:hover:not(:disabled) { border-color: color-mix(in srgb, var(--text) 45%, transparent); }
 .control:focus-visible { outline: 2px solid var(--primary); outline-offset: 0; border-color: var(--primary); }
 .control[aria-invalid="true"] { border-color: var(--danger); }
-.control:disabled { background: var(--grey-soft); }
+.control:disabled { opacity: 0.45; }
 textarea.control { resize: vertical; }
 
 .check {

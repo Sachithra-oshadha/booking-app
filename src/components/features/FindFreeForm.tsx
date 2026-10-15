@@ -10,6 +10,7 @@ import { FormField } from "@/components/ui/FormField";
 import { Input, Select } from "@/components/ui/Input";
 import type { Result } from "@/lib/errors";
 import styles from "./FindFreeForm.module.css";
+import { ArrowRight } from "lucide-react";
 
 type Found = { date: string; startTime: string; endTime: string; items: { id: string; name: string; assetCode: string; typeName: string; locationPath: string; requiresApproval: boolean }[] };
 
@@ -64,7 +65,7 @@ export function FindFreeForm({
                 <strong>{r.name}</strong> <span className="muted small">{r.assetCode} · {r.typeName} · {r.locationPath}</span>
               </div>
               {r.requiresApproval && <Badge status="pending">Needs approval</Badge>}
-              <Link href={`/resources/${r.id}?date=${found.date}&start=${found.startTime}&end=${found.endTime}`}>Book →</Link>
+              <Link href={`/resources/${r.id}?date=${found.date}&start=${found.startTime}&end=${found.endTime}`}>Book <ArrowRight aria-hidden="true" size={14} style={{ verticalAlign: "text-bottom" }} /></Link>
             </li>
           ))}
         </ul>

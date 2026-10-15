@@ -1,14 +1,19 @@
 .btn {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   padding: 8px 16px;
   min-height: 40px;
-  border: 1px solid transparent;
-  border-radius: var(--radius);
-  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font-heading);
+  font-size: 16px;
   font-weight: 600;
+  letter-spacing: 0.01em;
   line-height: 1.2;
   cursor: pointer;
   text-decoration: none;
@@ -16,18 +21,21 @@
   transition: background-color 0.15s, border-color 0.15s;
 }
 .btn:hover { text-decoration: none; }
-.btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
-.sm { padding: 4px 12px; min-height: 32px; font-size: 13px; }
+.sm { padding: 4px 12px; min-height: 32px; font-size: 14px; }
 
-.primary { background: var(--primary); color: #fff; }
-.primary:hover:not(:disabled) { background: var(--primary-hover); }
+.primary { background: var(--primary); border-color: var(--primary); color: var(--bg); }
+.primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); color: var(--bg); }
+.primary:active:not(:disabled) { background: var(--primary-active); }
 
-.secondary { background: var(--surface); color: var(--text); border-color: var(--border-strong); }
-.secondary:hover:not(:disabled) { background: var(--grey-soft); }
+.secondary { color: var(--text); border-color: var(--border-strong); }
+.secondary:hover:not(:disabled) { background: color-mix(in srgb, var(--text) 7%, transparent); color: var(--text); }
+.secondary:active:not(:disabled) { background: color-mix(in srgb, var(--text) 14%, transparent); }
 
-.danger { background: var(--danger); color: #fff; }
-.danger:hover:not(:disabled) { background: var(--danger-hover); }
+.danger { background: var(--danger); border-color: var(--danger); color: #fff; }
+.danger:hover:not(:disabled) { background: var(--danger-hover); color: #fff; }
 
-.ghost { background: transparent; color: var(--primary-text); }
-.ghost:hover:not(:disabled) { background: var(--primary-soft); }
+.ghost { border-color: transparent; color: var(--primary-text); padding-inline: var(--space-2); }
+.ghost:hover:not(:disabled) { background: color-mix(in srgb, var(--primary) 10%, transparent); }
+.ghost:active:not(:disabled) { background: color-mix(in srgb, var(--primary) 18%, transparent); }

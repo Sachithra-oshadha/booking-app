@@ -1,16 +1,58 @@
 .card {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
-  padding: var(--space-4);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  transition: border-color 0.15s, box-shadow 0.15s;
+  gap: var(--space-3);
+  padding: 20px 20px 16px;
+  border: 1px solid var(--primary-border);
   color: var(--text);
+  transition: background-color 0.15s, border-color 0.15s;
 }
-.card:hover { border-color: var(--primary); box-shadow: var(--shadow-md); text-decoration: none; }
-.top { display: flex; justify-content: space-between; align-items: center; }
-.code { font-family: Consolas, monospace; font-size: 12px; color: var(--muted); }
-.foot { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-top: var(--space-2); }
+.card:hover { background: var(--primary-soft); border-color: var(--primary); text-decoration: none; color: var(--text); }
+.dim { opacity: 0.72; border-color: var(--border); }
+.dim :global(.corner) { color: color-mix(in srgb, var(--text) 55%, transparent); }
+.dim:hover { opacity: 1; border-color: var(--primary); }
+.card :global(.corner) { color: var(--primary); }
+.top { display: flex; justify-content: space-between; align-items: center; gap: var(--space-2); }
+.code {
+  font-family: var(--font-heading);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.body { display: flex; flex-direction: column; gap: 6px; }
+.name { font-size: 24px; line-height: 1.1; }
+.loc { display: flex; gap: var(--space-2); align-items: flex-start; font-size: 14px; line-height: 1.35; }
+.loc svg { flex: none; margin-top: 1px; color: var(--primary); }
+.place { display: block; font-weight: 500; }
+.area { display: block; color: var(--muted); }
+.meta { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; margin-top: 2px; }
+.foot {
+  margin-top: auto;
+  padding-top: var(--space-3);
+  border-top: 1px solid color-mix(in srgb, var(--primary) 30%, transparent);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+.note { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: #424244; }
+.note svg { flex: none; }
+.noteOn { color: var(--primary-text); }
+/* Visual-only button: the whole card is the link, so this is a span (no nested interactive elements). */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 4px 12px;
+  border: 1px solid var(--border-strong);
+  font-family: var(--font-heading);
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ctaPrimary { background: var(--primary); border-color: var(--primary); color: var(--bg); }
+.card:hover .ctaPrimary { background: var(--primary-hover); border-color: var(--primary-hover); }
+.ctaGhost { border-color: transparent; color: var(--primary-text); padding-inline: var(--space-1); }

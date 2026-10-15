@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Corners } from "./Corners";
 import styles from "./Button.module.css";
 
 type Variant = "primary" | "secondary" | "danger" | "ghost";
@@ -12,9 +13,15 @@ export function Button({
   size = "md",
   className,
   type = "button",
+  children,
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & { variant?: Variant; size?: Size }) {
-  return <button type={type} className={cls(variant, size, className)} {...props} />;
+  return (
+    <button type={type} className={cls(variant, size, className)} {...props}>
+      {variant === "primary" && <Corners />}
+      {children}
+    </button>
+  );
 }
 
 export function LinkButton({
@@ -30,6 +37,7 @@ export function LinkButton({
 }) {
   return (
     <Link href={href} className={cls(variant, size)}>
+      {variant === "primary" && <Corners />}
       {children}
     </Link>
   );
